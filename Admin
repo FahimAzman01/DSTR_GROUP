@@ -1,7 +1,449 @@
-#include <iostream>
-using namespace std;
+# SUBAWAY CLASS INFO
 
-int main() {
-  cout << "Hello World!";
-  return 0;
-}
+
+#include<iostream>
+#include<cmath>
+#include <ctime>
+#include<string.h>
+
+#define ATSTART 0
+#define ATEND 1
+#define BETWEEN 2
+using namespace std;
+int ID = 0;           /// taking ID of subway station ///
+int transactionID = 100;
+int ticketID = 500;
+int cusID = 200;
+
+
+///// class having details of each subway station /////
+class subway{
+private:
+    int subwayID;
+    string currentStationName;
+    string previousStationName;
+    string nextStationName;
+    int travelDistanceBetweenPreviousStation;
+    float travelFareBetweenPreviousStation;
+    int travelTimeBetweenPreviousStation;
+    int travelDistanceBetweenNextStation;
+    float travelFareBetweenNextStation;
+    int travelTimeBetweenNextStation;
+
+public:
+	subway() {
+		subwayID = 0;
+        previousStationName = "";
+        currentStationName = "";
+        nextStationName = "";
+        travelDistanceBetweenPreviousStation = 0;
+        travelFareBetweenPreviousStation = 0.0;
+        travelTimeBetweenPreviousStation = 0;
+        travelDistanceBetweenNextStation = 0;
+        travelFareBetweenNextStation = 0.0;
+        travelTimeBetweenNextStation = 0;
+	}
+
+
+    subway(int subwayID, string currentStationName, string previousStationName,
+        string nextStationName, int travelDistanceBetweenPreviousStation,
+        float travelFareBetweenPreviousStation, int travelTimeBetweenPreviousStation,
+        int travelDistanceBetweenNextStation, float travelFareBetweenNextStation,
+        int travelTimeBetweenNextStation){
+            
+            this->subwayID = subwayID;
+            this->previousStationName = previousStationName;
+            this->currentStationName = currentStationName;
+            this->nextStationName = nextStationName;
+            this->travelDistanceBetweenPreviousStation = travelDistanceBetweenPreviousStation;
+            this->travelFareBetweenPreviousStation = travelFareBetweenPreviousStation;
+            this->travelTimeBetweenPreviousStation = travelTimeBetweenPreviousStation;
+            this->travelDistanceBetweenNextStation = travelDistanceBetweenNextStation;
+            this->travelFareBetweenNextStation = travelFareBetweenNextStation;
+            this->travelTimeBetweenNextStation = travelTimeBetweenNextStation;
+    }
+
+    void setTravelTimePrev(int time){
+        this->travelTimeBetweenPreviousStation = time;
+    }
+
+    void setTravelTimeNext(int time){
+        this->travelTimeBetweenNextStation = time;
+    }
+
+    void setTravelFarePrev(float amount){
+        this->travelFareBetweenPreviousStation = amount;
+    }
+
+    void setTravelFareNext(float amount){
+        this->travelFareBetweenNextStation = amount;
+    }
+
+
+    void setCurreneStationName(string name){
+        this->currentStationName = name;
+    }
+
+
+    int getSubwayID(){
+        return subwayID;
+    }
+
+    string getCurrentStationName(){
+        return currentStationName;
+    }
+
+    string getPreviousStationName(){
+        return previousStationName;
+    }
+
+    string getNextStationName(){
+        return nextStationName;
+    }
+
+    int getDistanceBetweenPreviousStation(){
+        return travelDistanceBetweenPreviousStation;
+    }
+
+    float getFareBetweenPreviousStation(){
+        return travelFareBetweenPreviousStation;
+    }
+
+    int getTimeBetweenPreviousStation(){
+        return travelTimeBetweenPreviousStation;
+    }
+
+
+    int getDistanceBetweenNextStation(){
+        return travelDistanceBetweenNextStation;
+    }
+
+    float getFareBetweenNextStation(){
+        return travelFareBetweenNextStation;
+    }
+
+    int getTimeBetweenNextStation(){
+        return travelTimeBetweenNextStation;
+    }
+};
+subway* getStationInfo(int flag);
+
+class Date{
+private:
+    int day;
+    int month;
+    int year;
+public:
+    Date(){
+       day = 0;
+       month = 0;
+       year = 0; 
+    }
+
+    Date(int day, int month, int year){
+        this->day = day;
+        this->month = month;
+        this->year = year;
+    }
+
+    int getDay(){
+        return day;
+    }
+
+    int getMonth(){
+        return month;
+    }
+
+    int getYear(){
+        return year;
+    }
+
+    void printDate(){
+        cout << day << "/"<< month <<"/"<< year << endl;
+    }
+};
+
+
+
+
+class Time{
+    int hour;
+    int min;
+    int sec;
+public:
+    Time(){
+        hour = 0;
+        min = 0;
+        sec = 0;
+    }
+
+    Time(int hour, int min, int sec){
+        this->hour = hour;
+        this->min = min;
+        this->sec = sec;
+    }
+
+    int getHour(){
+        return hour;
+    }
+
+    int getMin(){
+        return min;
+    }
+
+    int getSec(){
+        return sec;
+    }
+
+    void printTime(){
+        cout << hour << ":"<< min<< ":"<< sec << endl; 
+    }
+};
+
+class Node {
+    subway* station;
+	Node* next;
+	Node* prev;
+
+public:
+	Node() {
+        station = NULL;
+		next = NULL;
+		prev = NULL;
+	}
+
+
+    Node(subway* station){
+        this->station = station;
+    }
+
+
+	void setNext(Node* next) {
+		this->next = next;
+	}
+
+	Node* getNext() {
+		return next;
+	}
+
+	void setPrev(Node* prev) {
+		this->prev = prev;
+	}
+
+	Node* getPrev() {
+		return prev;
+	}
+
+    subway* getStation(){
+        return station;
+    }
+};
+
+
+
+void Insert(subway* station) {
+        subway* obj = new subway(station->getSubwayID(), station->getCurrentStationName(),
+        station->getPreviousStationName(), station->getNextStationName(), 
+        station->getDistanceBetweenPreviousStation(), station->getFareBetweenPreviousStation(),
+        station->getTimeBetweenPreviousStation(), station->getDistanceBetweenNextStation(), 
+        station->getFareBetweenNextStation(), station->getTimeBetweenNextStation());
+		
+        Node* newNode = new Node(obj);
+		
+		newNode->setNext(NULL);
+		if (head == NULL) {
+			head = newNode;
+		}
+		else {
+			newNode->setPrev(last);
+			last->setNext(newNode);
+		}
+		last = newNode;
+		ID++;
+
+        count++;                        /// keeping track of number of stations ///
+	}
+  
+  
+  
+  # ADDING NEW SUBWAY STATION
+  
+  void addNewStation(subway* station, int index){
+        subway* obj = new subway(station->getSubwayID(), station->getCurrentStationName(),
+        station->getPreviousStationName(), station->getNextStationName(), 
+        station->getDistanceBetweenPreviousStation(), station->getFareBetweenPreviousStation(),
+        station->getTimeBetweenPreviousStation(), station->getDistanceBetweenNextStation(), 
+        station->getFareBetweenNextStation(), station->getTimeBetweenNextStation());
+
+        
+        Node* newNode = new Node(obj);
+        newNode->setNext(NULL);
+        newNode->setPrev(NULL);
+
+        if(index < 1) {
+            cout<<"\nIndex should be >= 1.";
+        } else if (index == 1) {
+  
+            /// it means insertig new node at start ///
+            newNode->setNext(head);
+            head->setPrev(newNode);
+            head = newNode;
+        } 
+        else{
+            
+            Node* temp = head;
+            for(int i = 1; i < index-1; i++) {
+                if(temp != NULL) {
+                temp = temp->getNext();
+                }
+            }
+
+            if(temp != NULL) {
+                newNode->setNext(temp->getNext());
+                newNode->setPrev(temp);
+                temp->setNext(newNode);
+                if(newNode->getNext() != NULL)
+                    newNode->getNext()->setPrev(newNode);  
+            }
+
+        }
+
+    }
+
+# EDIT EXISTING SUBWAY INFO
+
+    void EditStationInformation(){
+        char ch;
+        int index, choice;
+        printStations();
+        cout << "\nWhich station number information you want to eidt = ";
+        cin >> index;
+        if(index > ID || index < 1){
+            cout << "\nStation number not exist\n\n";
+        }
+        else{
+            Node* ptr = searchStation(index);
+            system("clear");
+
+
+            subway* sub = ptr->getStation();
+
+            //do{
+                cout << "\t1: Edit travel fare between previous city\n";
+                cout << "\t2: Edit travel fare between next city\n";
+                cout << "\t3: Edit travel time between previous city\n";
+                cout << "\t4: Edit travel time between next city\n";
+                cout << "\t5: Edit station name\n";
+                cout << "What you wish to edit = ";
+                cin >> choice;
+                switch(choice){
+                    case 1:{
+                        float fare;
+                        cout << "\nEnter new fare between previous city = ";
+                        cin >> fare;
+                        sub->setTravelFarePrev(fare);
+                        cout << "\nChanged Successfully\n";
+                    }
+                        
+                        break;
+
+                    case 2:{
+                        float fare;
+                        cout << "\nEnter new fare between next city = ";
+                        cin >> fare;
+                        sub->setTravelFareNext(fare);
+                        cout << "\nChanged Successfully\n";
+                    }
+                        break;
+
+                    case 3:{
+                        int time;
+                        cout << "\nEnter new travel time between previous city = ";
+                        cin >> time;
+                        sub->setTravelTimePrev(time);
+                        cout << "\nChanged Successfully\n";
+                    }
+
+                        break;
+
+                    case 4:{
+                        int time;
+                        cout << "\nEnter new travel time between next city = ";
+                        cin >> time;
+                        sub->setTravelTimeNext(time);
+                        cout << "\nChanged Successfully\n";
+                    }
+
+                        break;
+
+                    case 5:{
+                        string station;
+                        cout << "\nEnter new station name = ";
+                        cin >> station;
+                        sub->setCurreneStationName(station);
+                        cout << "\nChanged Successfully\n";
+                    }
+
+                        break;
+
+                    default:
+                        cout << " Incorrect input.\n ";
+                        break;
+                }
+
+            //         cout << " Do you want to do more changes (y/n)= ";
+            //         cin >> ch;
+            //         system("clear");
+            // }while(ch =='y' || ch == 'Y');   
+        }
+    }
+
+
+
+    ~List(){
+        if(head != NULL){
+            while(head != NULL){
+                Node* temp = head;
+                head = head->getNext();
+                delete temp;
+            }
+        }   
+    }
+
+};
+
+# DISPLAYING OF ALL TRANSACTIONS
+
+bool displayAllTransactions() {
+        int transactionNumber = 1;
+		TransactionNode* temp = head;
+		if (temp == NULL){
+			cout << "Transaction Record is Empty.\n";
+            return false;
+        } else {
+			while (temp != NULL) {
+                cout << "\t-------- Transaction No: "<< transactionNumber <<" -------\n";
+
+                cout << "\nTransaction ID = " << temp->getTransactionID();
+                cout << "\nTicket ID = " << temp->getTicketID();
+                cout << "\nSource Station = " << temp->getSourceStation();
+                cout << "\nTarget Station = " << temp->gettargetStation();
+                cout << "\nTotal Ticket Amount = RM " << temp->getTicketAmount();
+                cout << "\nTransaction Date = ";
+                (temp->getTransactionDate())->printDate();
+                cout << "\nTransaction Time = " ;
+                (temp->getTransactionTime())->printTime();
+                cout << "\nDeparture Time = ";
+                (temp->getDepartureTime())->printTime();
+                cout << "\nCustomer ID = " << temp->getCustomerID();
+                cout << "\nCustomer Name = " << temp->getCustomerName();
+                cout << "\nCustomer ID Card = " << temp->getCustomerIDCard();
+
+				temp = temp->getNext();
+                cout <<"\n\n";
+                transactionNumber++;
+			}
+		}
+
+        return true;
+	}
